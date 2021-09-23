@@ -23,8 +23,6 @@ public class Background {
         public void update(float dt) {
             position.x += (velocity.x - game.getHero().getLastDisplacement().x * 15) * dt;
             position.y += (velocity.y - game.getHero().getLastDisplacement().y * 15) * dt;
-
-
             if (position.x < -200) {
                 position.x = ScreenManager.SCREEN_WIDTH + 200;
                 position.y = MathUtils.random(-200, ScreenManager.SCREEN_HEIGHT + 200);
@@ -33,17 +31,52 @@ public class Background {
         }
     }
 
+    //3. Сделать астероид, который летает в произвольную сторону и пересекает экран( и появляется с другой стороны)
+    // не уверен, что внутренний класс - лучший вариант
+    private class Asteroid {
+        private Vector2 position;
+        private Vector2 velocity;
+        private float scale;
+
+        public Asteroid() {
+            this.position = new Vector2(MathUtils.random(0, ScreenManager.SCREEN_WIDTH), MathUtils.random(0, ScreenManager.SCREEN_HEIGHT));
+            this.velocity = new Vector2(MathUtils.random(-0.5f,0.5f), MathUtils.random(-0.5f,0.5f));
+        }
+
+        public void update(float dt) {
+            position.x += velocity.x * dt;
+            position.y += velocity.y * dt;
+            if (position.x < -250) {
+                position.x = ScreenManager.SCREEN_WIDTH + 50;
+            }
+            if (position.x > ScreenManager.SCREEN_WIDTH + 250) {
+                position.x = ScreenManager.SCREEN_WIDTH - 1400;
+            }
+            if (position.y < -250) {
+                position.y = ScreenManager.SCREEN_HEIGHT + 50;
+            }
+            if (position.y > ScreenManager.SCREEN_HEIGHT + 250){
+                position.y = ScreenManager.SCREEN_HEIGHT - 850;
+            }
+
+        }
+    }
+
     private final int STAR_COUNT = 1000;
     private StarGame game;
     private Texture textureCosmos;
     private Texture textureStar;
+    private Texture textureAsteroid;
+    private Asteroid asteroid;
     private Star[] stars;
 
     public Background(StarGame game) {
         this.textureCosmos = new Texture("bg.png");
         this.textureStar = new Texture("star16.png");
+        this.textureAsteroid = new Texture("asteroid.png");
         this.stars = new Star[STAR_COUNT];
         this.game = game;
+        this.asteroid = new Asteroid();
         for (int i = 0; i < stars.length; i++) {
             stars[i] = new Star();
         }
@@ -62,12 +95,14 @@ public class Background {
                         0, 0, 0, 16, 16, false, false);
             }
         }
-
+        //решил не заморачиваться с кучей параметров и просто напрямую указал размеры
+        batch.draw(textureAsteroid, asteroid.position.x, asteroid.position.y, 64, 64);
     }
 
     public void update(float dt){
         for (int i = 0; i < stars.length; i++) {
             stars[i].update(dt);
+            asteroid.update(dt);
         }
 
     }

@@ -41,8 +41,12 @@ public class Hero {
             position.y += MathUtils.sinDeg(angle) * 240.0f * dt;
             lastDisplacement.set(MathUtils.cosDeg(angle) * 240.0f * dt, MathUtils.sinDeg(angle) * 240.0f * dt);
         }
-        else {
-            lastDisplacement.set(0, 0);
+
+        //2. Сделать по кнопке S движение назад с уменьшенной скоростью
+        if(Gdx.input.isKeyPressed(Input.Keys.S)) {
+            position.x += -MathUtils.cosDeg(angle) * 120.0f * dt;
+            position.y += -MathUtils.sinDeg(angle) * 120.0f * dt;
+            lastDisplacement.set(-MathUtils.cosDeg(angle) * 120.0f * dt, -MathUtils.sinDeg(angle) * 120.0f * dt);
         }
 
         if(position.x < 32f) {
