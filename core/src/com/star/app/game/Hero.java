@@ -4,18 +4,34 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.screen.ScreenManager;
+import com.star.app.screen.utils.Assets;
 
 public class Hero {
-    private Texture texture;
+    private TextureRegion texture;
     private Vector2 position;
     private Vector2 velocity;
     private float angle;
     private float enginePower;
     private GameController gc;
     private float fireTimer;
+    private int score;
+    private int scoreView;
+
+    public int getScore() {
+        return score;
+    }
+
+    public int getScoreView() {
+        return scoreView;
+    }
+
+    public void addScore(int amount) {
+        this.score += amount;
+    }
 
     public Vector2 getVelocity() {
         return velocity;
@@ -27,7 +43,7 @@ public class Hero {
 
     public Hero(GameController gc) {
         this.gc = gc;
-        this.texture = new Texture("ship.png");
+        this.texture = Assets.getInstance().getAtlas().findRegion("ship");
         this.position = new Vector2(640, 360);
         this.velocity = new Vector2(0,0);
         this.angle = 0.0f;
@@ -36,16 +52,32 @@ public class Hero {
 
     public void render(SpriteBatch batch) {
         batch.draw(texture, position.x-32, position.y-32, 32, 32, 64, 64, 1,
-                1, angle, 0,0,64,64,false,false);
+                1, angle);
     }
 
     public void update(float dt) {
         fireTimer += dt;
+        if(scoreView < score) {
+            scoreView += 1000 * dt;
+            if(scoreView > score) {
+                scoreView = score;
+            }
+        }
         if (Gdx.input.isKeyPressed(Input.Keys.P)) {
             if (fireTimer > 0.2) {
                 fireTimer = 0.0f;
-                gc.getBulletController().setup(position.x, position.y,
+                float wx;
+                float wy;
+                wx = position.x + MathUtils.cosDeg(angle + 90) * 20;
+                wy = position.y + MathUtils.sinDeg(angle + 90) * 20;
+                gc.getBulletController().setup(wx, wy,
                         MathUtils.cosDeg(angle) * 500 + velocity.x, MathUtils.sinDeg(angle) * 500 + velocity.y);
+
+                wx = position.x + MathUtils.cosDeg(angle - 90) * 20;
+                wy = position.y + MathUtils.sinDeg(angle - 90) * 20;
+                gc.getBulletController().setup(wx, wy,
+                        MathUtils.cosDeg(angle) * 500 + velocity.x, MathUtils.sinDeg(angle) * 500 + velocity.y);
+
             }
         }
 

@@ -4,10 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.StarGame;
 import com.star.app.screen.ScreenManager;
+import com.star.app.screen.utils.Assets;
 
 public class Background {
     private class Star {
@@ -36,16 +38,16 @@ public class Background {
     private final int STAR_COUNT = 1000;
     private GameController gc;
     private Texture textureCosmos;
-    private Texture textureStar;
+    private TextureRegion textureStar;
     private Asteroid asteroid;
     private Star[] stars;
 
     public Background(GameController gc) {
-        this.textureCosmos = new Texture("bg.png");
-        this.textureStar = new Texture("star16.png");
+        this.textureCosmos = new Texture("images/bg.png");
+        this.textureStar = Assets.getInstance().getAtlas().findRegion("star16");
         this.stars = new Star[STAR_COUNT];
         this.gc = gc;
-        this.asteroid = new Asteroid();
+        this.asteroid = new Asteroid(gc);
         for (int i = 0; i < stars.length; i++) {
             stars[i] = new Star();
         }
@@ -55,13 +57,12 @@ public class Background {
         batch.draw(textureCosmos, 0, 0);
         for (int i = 0; i < stars.length; i++) {
             batch.draw(textureStar, stars[i].position.x - 8, stars[i].position.y - 8,
-                    8, 8, 16, 16, stars[i].scale, stars[i].scale, 0, 0, 0,
-                    16, 16, false, false);
+                    8, 8, 16, 16, stars[i].scale, stars[i].scale, 0);
 
             if (MathUtils.random(0, 300) < 1) {
                 batch.draw(textureStar, stars[i].position.x - 8, stars[i].position.y - 8,
                         8, 8, 16, 16, stars[i].scale * 2, stars[i].scale * 2,
-                        0, 0, 0, 16, 16, false, false);
+                        0);
             }
         }
     }
@@ -74,7 +75,7 @@ public class Background {
         if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
             gc.getAsteroidController().setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
                     MathUtils.random(0, ScreenManager.SCREEN_HEIGHT), MathUtils.random(-100f, 100f),
-                    MathUtils.random(-100f, 100f));
+                    MathUtils.random(-100f, 100f), 1.0f);
         }
 
     }

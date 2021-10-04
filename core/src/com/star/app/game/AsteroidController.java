@@ -2,33 +2,35 @@ package com.star.app.game;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.star.app.game.helpers.ObjectPool;
+import com.star.app.screen.utils.Assets;
 
 
 //2. Заверните ваши астероиды в контроллер
 public class AsteroidController extends ObjectPool<Asteroid> {
-    private Texture asteroidTexture;
+
+    private GameController gc;
 
     @Override
     protected Asteroid newObject() {
-        return new Asteroid();
+        return new Asteroid(gc);
     }
 
-    public AsteroidController() {
-        this.asteroidTexture = new Texture("asteroid.png");
+    public AsteroidController(GameController gc) {
+        this.gc = gc;
+
     }
 
-    //астероид рисуется не из центра
     public void render(SpriteBatch batch) {
         for (int i = 0; i < activeList.size(); i++) {
             Asteroid asteroid = activeList.get(i);
-            batch.draw(asteroidTexture, asteroid.getPosition().x, asteroid.getPosition().y,
-                    64, 64);
+            asteroid.render(batch);
        }
     }
 
-    public void setup(float x, float y, float vx, float vy) {
-        getActiveElement().activate(x, y, vx, vy);
+    public void setup(float x, float y, float vx, float vy, float scale) {
+        getActiveElement().activate(x, y, vx, vy, scale);
     }
 
     public void update(float dt) {
