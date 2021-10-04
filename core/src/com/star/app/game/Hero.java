@@ -49,6 +49,7 @@ public class Hero {
             }
         }
 
+
         if(Gdx.input.isKeyPressed(Input.Keys.A)) {
             angle += 180.0f * dt;
         }
