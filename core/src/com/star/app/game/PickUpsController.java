@@ -6,29 +6,29 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.star.app.game.helpers.ObjectPool;
 import com.star.app.screen.utils.Assets;
 
-public class BulletController extends ObjectPool<Bullet> {
+public class PickUpsController extends ObjectPool<PickUps> {
     private GameController gc;
-    private TextureRegion bulletTexture;
+    private TextureRegion ammoTexture;
 
     @Override
-    protected Bullet newObject() {
-        return new Bullet(gc);
+    protected PickUps newObject() {
+        return new PickUps(gc);
     }
 
-    public BulletController(GameController gc) {
+    public PickUpsController(GameController gc) {
         this.gc = gc;
-        this.bulletTexture = Assets.getInstance().getAtlas().findRegion("bullet");
+        this.ammoTexture = Assets.getInstance().getAtlas().findRegion("bullets");
     }
 
     public void render(SpriteBatch batch) {
         for (int i = 0; i < activeList.size(); i++) {
-            Bullet b = activeList.get(i);
-            batch.draw(bulletTexture, b.getPosition().x - 16, b.getPosition().y - 16);
+            PickUps ammo = activeList.get(i);
+            batch.draw(ammoTexture, ammo.getPosition().x - 16, ammo.getPosition().y - 16);
         }
     }
 
-    public void setup(float x, float y, float vx, float vy) {
-        getActiveElement().activate(x, y, vx, vy);
+    public void setup(float x, float y) {
+        getActiveElement().activate(x, y);
     }
 
     public void update(float dt) {

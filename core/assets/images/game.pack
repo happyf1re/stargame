@@ -1,7 +1,7 @@
 
 images1.png
 format: RGBA8888
-filter: Linear,Linear
+filter: Nearest,Nearest
 repeat: none
 asteroid
   rotate: false
@@ -17,9 +17,16 @@ ship
   orig: 64, 64
   offset: 0, 0
   index: -1
-bullet
+bullets
   rotate: false
   xy: 326, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+bullet
+  rotate: false
+  xy: 360, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0

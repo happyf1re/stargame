@@ -30,6 +30,10 @@ public class Asteroid implements Poolable {
         return scale;
     }
 
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+
     public int getHpMax() {
         return hpMax;
     }
@@ -81,6 +85,7 @@ public class Asteroid implements Poolable {
     public boolean takeDamage(int amount) {
         hp -= amount;
         if(hp <= 0) {
+            gc.getPickUpsController().setup(position.x, position.y);
             deactivate();
             if(scale > 0.3) {
                 gc.getAsteroidController().setup(position.x, position.y,
