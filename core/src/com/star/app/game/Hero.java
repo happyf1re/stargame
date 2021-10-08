@@ -25,6 +25,7 @@ public class Hero {
     private int score;
     private int scoreView;
     private int hp;
+    private int money;
     private Circle hitArea;
     private StringBuilder stringBuilder;
     private Weapon currentWeapon;
@@ -71,7 +72,7 @@ public class Hero {
         this.stringBuilder = new StringBuilder();
         this.hitArea = new Circle(position, 26);
         this.currentWeapon = new Weapon(
-                gc, this, "Laser", 0.2f, 1, 600, 100,
+                gc, this, "Laser", 0.2f, 1, 600, 300,
                 new Vector3[]{
                         new Vector3(20, 0, 0),
                         new Vector3(20, 90, 20),
@@ -84,9 +85,6 @@ public class Hero {
         hp -= amount;
     }
 
-    public void reload(PickUps p) {
-        currentWeapon.addBullets(10);
-    }
 
     public void render(SpriteBatch batch) {
         batch.draw(texture, position.x - 32, position.y - 32, 32, 32, 64, 64, 1,
@@ -97,6 +95,7 @@ public class Hero {
         stringBuilder.clear();
         stringBuilder.append("SCORE: ").append(scoreView).append("\n");
         stringBuilder.append("HP: ").append(hp).append("\n");
+        stringBuilder.append("MONEY: ").append(money).append("\n");
         stringBuilder.append("BULLETS: ").append(currentWeapon.getCurBullets()).append(" / ")
                 .append(currentWeapon.getMaxBullets()).append("\n");
         font.draw(batch, stringBuilder, 20, 700);
@@ -199,6 +198,20 @@ public class Hero {
         if (position.y > ScreenManager.SCREEN_HEIGHT - 32f) {
             position.y = ScreenManager.SCREEN_HEIGHT - 32f;
             velocity.y *= -1;
+        }
+    }
+
+    public void consume(PowerUp p) {
+        switch (p.getType()) {
+            case MEDKIT:
+                hp += p.getPower();
+                break;
+            case MONEY:
+                money += p.getPower();
+                break;
+            case AMMOS:
+                currentWeapon.addAmmos(p.getPower());
+                break;
         }
     }
 }

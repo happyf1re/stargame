@@ -1,13 +1,27 @@
 
 images1.png
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
 asteroid
   rotate: false
   xy: 2, 2
   size: 256, 256
   orig: 256, 256
+  offset: 0, 0
+  index: -1
+powerups
+  rotate: false
+  xy: 2, 260
+  size: 360, 240
+  orig: 360, 240
+  offset: 0, 0
+  index: -1
+simpleButton
+  rotate: false
+  xy: 2, 502
+  size: 320, 80
+  orig: 320, 80
   offset: 0, 0
   index: -1
 ship
@@ -17,16 +31,16 @@ ship
   orig: 64, 64
   offset: 0, 0
   index: -1
-bullets
+smButton
   rotate: false
   xy: 326, 2
-  size: 32, 32
-  orig: 32, 32
+  size: 120, 32
+  orig: 120, 32
   offset: 0, 0
   index: -1
 bullet
   rotate: false
-  xy: 360, 2
+  xy: 448, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
