@@ -77,6 +77,9 @@ public class Background {
                     MathUtils.random(0, ScreenManager.SCREEN_HEIGHT), MathUtils.random(-100f, 100f),
                     MathUtils.random(-100f, 100f), 1.0f);
         }
+    }
 
+    public void dispose() {
+        textureCosmos.dispose();
     }
 }

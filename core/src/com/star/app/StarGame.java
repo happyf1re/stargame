@@ -27,6 +27,6 @@ public class StarGame extends Game {
 	@Override
 	public void dispose () {
 		batch.dispose();
-
 	}
+
 }

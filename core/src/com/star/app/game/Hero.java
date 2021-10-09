@@ -1,5 +1,6 @@
 package com.star.app.game;
 
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
@@ -29,6 +30,7 @@ public class Hero {
     private Circle hitArea;
     private StringBuilder stringBuilder;
     private Weapon currentWeapon;
+    private boolean pause;
 
     private final float BASE_SIZE = 64.0f;
     private final float BASE_RADIUS = BASE_SIZE / 2;
@@ -83,6 +85,9 @@ public class Hero {
 
     public void takeDamage(int amount) {
         hp -= amount;
+        if(hp < 100) {
+            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER);
+        }
     }
 
 
@@ -152,7 +157,29 @@ public class Hero {
             velocity.set(-MathUtils.cosDeg(angle) * 120.0f * dt, -MathUtils.sinDeg(angle) * 120.0f * dt);
         }
 
+
+        //Пауза, реализация хромает, т.к. рендер замирает, а вот логика не уверен.
+        if (Gdx.input.isKeyJustPressed(Input.Keys.O)) {
+            if(pause) {
+                Gdx.graphics.setContinuousRendering(false);
+            }else {
+                Gdx.graphics.setContinuousRendering(true);
+            }
+
+
+            //Ещё один вариант паузы через засыпание потока. По сути костыль, т.к. толком не разобрался с правильным пробуждением
+            if (Gdx.input.isKeyJustPressed(Input.Keys.U)) {
+                for (int i = 0; i < 100; i++) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                    }
+                    Gdx.graphics.requestRendering();
+                }
+            }
+        }
     }
+
 
     private void updateScore(float dt) {
         if (scoreView < score) {
