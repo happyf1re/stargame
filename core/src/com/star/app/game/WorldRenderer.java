@@ -28,7 +28,7 @@ public class WorldRenderer {
         gc.getHero().render(batch);
         gc.getBulletController().render(batch);
         gc.getParticleController().render(batch);
-        gc.getPickUpsController().render(batch);
+        gc.getPowerUpsController().render(batch);
         gc.getHero().renderGUI(batch, font32);
         batch.end();
     }
