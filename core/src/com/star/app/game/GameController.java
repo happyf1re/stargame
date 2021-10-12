@@ -16,6 +16,11 @@ public class GameController {
     private Hero hero;
     private Vector2 tmpVec;
     private Stage stage;
+    private int level;
+
+    public GameController(int level) {
+        this.level = level;
+    }
 
     public Stage getStage() {
         return stage;
@@ -54,9 +59,19 @@ public class GameController {
         this.powerUpsController = new PowerUpsController(this);
         this.stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
         this.stage.addActor(hero.getShop());
+        this.level = 1;
         Gdx.input.setInputProcessor(stage);
         this.tmpVec = new Vector2(0.0f, 0.0f);
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 1; i++) {
+            asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
+                    MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
+                    MathUtils.random(-200, 200), MathUtils.random(-200, 200), 1.0f);
+        }
+    }
+
+    //как бы создаём новый уровень, тупо создавая астероиды
+    public void nextLevel() {
+        for (int i = 0; i < 1; i++) {
             asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
                     MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
                     MathUtils.random(-200, 200), MathUtils.random(-200, 200), 1.0f);
@@ -73,6 +88,11 @@ public class GameController {
         checkCollisions();
         if (!hero.isAlive()) {
             ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER, hero);
+        }
+        //просто проходим по актив листу астероидов... если мы их уничтожили, то он должен быть пустой
+        if (asteroidController.getActiveList().size() == 0) {
+            nextLevel();
+            level++;
         }
         stage.act(dt);
     }
@@ -131,6 +151,11 @@ public class GameController {
 
         for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
             PowerUp p = powerUpsController.getActiveList().get(i);
+            if (p.getHitArea().overlaps(hero.getHitArea())) {
+                //делаем тоже самое, что и раньше, т.е. получаем нормальный вектор от героя до апгрейда
+                tmpVec.set(hero.getPosition()).sub(p.getPosition()).nor();
+                p.getVelocity().mulAdd(tmpVec, 100f);
+            }
             if (hero.getHitArea().contains(p.getPosition())) {
                 hero.consume(p);
                 particleController.getEffectBuilder().takePowerUpEffect(
