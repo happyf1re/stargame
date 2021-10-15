@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.star.app.game.helpers.Bot;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
 
@@ -16,6 +17,7 @@ public class GameController {
     private ParticleController particleController;
     private PowerUpsController powerUpsController;
     private Hero hero;
+    private Bot bot;
     private Vector2 tmpVec;
     private Stage stage;
     private boolean pause;
@@ -58,6 +60,9 @@ public class GameController {
     public Hero getHero() {
         return hero;
     }
+    public Bot getBot() {
+        return bot;
+    }
 
     public Background getBackground() {
         return background;
@@ -66,6 +71,7 @@ public class GameController {
     public GameController(SpriteBatch batch) {
         this.background = new Background(this);
         this.hero = new Hero(this);
+        this.bot = new Bot(this);
         this.asteroidController = new AsteroidController(this);
         this.bulletController = new BulletController(this);
         this.particleController = new ParticleController();
@@ -98,6 +104,7 @@ public class GameController {
         roundTimer += dt;
         background.update(dt);
         hero.update(dt);
+        bot.update(dt);
         asteroidController.update(dt);
         bulletController.update(dt);
         powerUpsController.update(dt);
@@ -180,6 +187,13 @@ public class GameController {
                         p.getPosition().x, p.getPosition().y, p.getType());
                 p.deactivate();
             }
+        }
+
+        if(bot.getHitArea().overlaps(hero.getHitArea())) {
+            tmpVec.set(hero.getPosition()).sub(bot.getPosition()).nor();
+            float angle = bot.getAngle();
+            angle = tmpVec.angleDeg();
+            bot.getVelocity().mulAdd(tmpVec, 10f);
         }
 
     }

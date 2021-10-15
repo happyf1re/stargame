@@ -103,7 +103,7 @@ public class Hero {
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
         this.enginePower = 500.0f;
-        this.hpMax = 100;
+        this.hpMax = 10;
         this.hp = hpMax;
         this.money = 100;
         this.shop = new Shop(this);
@@ -114,7 +114,6 @@ public class Hero {
         this.weaponNum = 0;
         this.currentWeapon = weapons[weaponNum];
     }
-
     public void render(SpriteBatch batch) {
         batch.draw(texture, position.x - 32, position.y - 32, 32, 32, 64, 64, 1, 1,
                 angle);
