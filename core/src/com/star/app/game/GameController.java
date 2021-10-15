@@ -1,11 +1,13 @@
 package com.star.app.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.star.app.screen.ScreenManager;
+import com.star.app.screen.utils.Assets;
 
 public class GameController {
     private Background background;
@@ -16,10 +18,21 @@ public class GameController {
     private Hero hero;
     private Vector2 tmpVec;
     private Stage stage;
+    private boolean pause;
     private int level;
+    private float roundTimer;
+    private Music music;
 
-    public GameController(int level) {
-        this.level = level;
+    public float getRoundTimer() {
+        return roundTimer;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setPause(boolean pause) {
+        this.pause = pause;
     }
 
     public Stage getStage() {
@@ -59,19 +72,19 @@ public class GameController {
         this.powerUpsController = new PowerUpsController(this);
         this.stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
         this.stage.addActor(hero.getShop());
-        this.level = 1;
         Gdx.input.setInputProcessor(stage);
         this.tmpVec = new Vector2(0.0f, 0.0f);
-        for (int i = 0; i < 1; i++) {
-            asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
-                    MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
-                    MathUtils.random(-200, 200), MathUtils.random(-200, 200), 1.0f);
-        }
+        this.level = 1;
+        this.roundTimer = 0.0f;
+        this.music = Assets.getInstance().getAssetManager().get("audio/mortal.mp3");
+        this.music.setLooping(true);
+        this.music.play();
+
+        generateBigAsteroids(1);
     }
 
-    //как бы создаём новый уровень, тупо создавая астероиды
-    public void nextLevel() {
-        for (int i = 0; i < 1; i++) {
+    private void generateBigAsteroids(int count) {
+        for (int i = 0; i < count; i++) {
             asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
                     MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
                     MathUtils.random(-200, 200), MathUtils.random(-200, 200), 1.0f);
@@ -79,6 +92,10 @@ public class GameController {
     }
 
     public void update(float dt) {
+        if (pause) {
+            return;
+        }
+        roundTimer += dt;
         background.update(dt);
         hero.update(dt);
         asteroidController.update(dt);
@@ -89,11 +106,12 @@ public class GameController {
         if (!hero.isAlive()) {
             ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER, hero);
         }
-        //просто проходим по актив листу астероидов... если мы их уничтожили, то он должен быть пустой
         if (asteroidController.getActiveList().size() == 0) {
-            nextLevel();
             level++;
+            generateBigAsteroids(level <= 3 ? level : 3);
+            roundTimer = 0.0f;
         }
+
         stage.act(dt);
     }
 
@@ -115,7 +133,7 @@ public class GameController {
                 if (a.takeDamage(2)) {
                     hero.addScore(a.getHpMax() * 20);
                 }
-                hero.takeDamage(2);
+                hero.takeDamage(level * 2);
             }
         }
 
@@ -151,11 +169,11 @@ public class GameController {
 
         for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
             PowerUp p = powerUpsController.getActiveList().get(i);
-            if (p.getHitArea().overlaps(hero.getHitArea())) {
-                //делаем тоже самое, что и раньше, т.е. получаем нормальный вектор от героя до апгрейда
+            if (hero.getMagneticField().contains(p.getPosition())) {
                 tmpVec.set(hero.getPosition()).sub(p.getPosition()).nor();
-                p.getVelocity().mulAdd(tmpVec, 100f);
+                p.getVelocity().mulAdd(tmpVec, 200.0f);
             }
+
             if (hero.getHitArea().contains(p.getPosition())) {
                 hero.consume(p);
                 particleController.getEffectBuilder().takePowerUpEffect(

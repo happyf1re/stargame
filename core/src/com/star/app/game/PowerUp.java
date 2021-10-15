@@ -1,6 +1,5 @@
 package com.star.app.game;
 
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.helpers.Poolable;
@@ -23,13 +22,6 @@ public class PowerUp implements Poolable {
     private boolean active;
     private Type type;
     private int power;
-    //хитарея для паверапсов, будет большая, чтобы легче притягивались
-    private Circle hitArea;
-
-    //геттер
-    public Circle getHitArea() {
-        return hitArea;
-    }
 
     public Type getType() {
         return type;
@@ -75,14 +67,12 @@ public class PowerUp implements Poolable {
         this.active = true;
         this.power = power;
         this.time = 0.0f;
-        //инициализируем
-        this.hitArea = new Circle(position, 200);
     }
 
     public void update(float dt) {
         position.mulAdd(velocity, dt);
         time += dt;
-        if (time >= 20.0f) {
+        if (time >= 7.0f) {
             deactivate();
         }
     }
