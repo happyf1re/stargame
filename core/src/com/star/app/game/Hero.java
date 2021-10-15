@@ -15,7 +15,7 @@ import com.star.app.screen.utils.Assets;
 
 public class Hero {
     public enum Skill {
-        HP_MAX(20), HP(20), WEAPON(100);
+        HP_MAX(20), HP(20), WEAPON(100), MAGNET(50);
 
         int cost;
 
@@ -38,10 +38,15 @@ public class Hero {
     private int money;
     private StringBuilder stringBuilder;
     private Circle hitArea;
+    private Circle magneticField;
     private Weapon currentWeapon;
     private Shop shop;
     private Weapon[] weapons;
     private int weaponNum;
+
+    public Circle getMagneticField() {
+        return magneticField;
+    }
 
     public Shop getShop() {
         return shop;
@@ -87,6 +92,10 @@ public class Hero {
         money -= amount;
     }
 
+    public void setPause(boolean pause) {
+        gc.setPause(pause);
+    }
+
     public Hero(GameController gc) {
         this.gc = gc;
         this.texture = Assets.getInstance().getAtlas().findRegion("ship");
@@ -100,6 +109,7 @@ public class Hero {
         this.shop = new Shop(this);
         this.stringBuilder = new StringBuilder();
         this.hitArea = new Circle(position, 26);
+        this.magneticField = new Circle(position, 100);
         createWeapons();
         this.weaponNum = 0;
         this.currentWeapon = weapons[weaponNum];
@@ -117,6 +127,7 @@ public class Hero {
         stringBuilder.append("MONEY: ").append(money).append("\n");
         stringBuilder.append("BULLETS: ").append(currentWeapon.getCurBullets()).append(" / ")
                 .append(currentWeapon.getMaxBullets()).append("\n");
+        stringBuilder.append("MAGNETIC: ").append((int) magneticField.radius).append("\n");
         font.draw(batch, stringBuilder, 20, 700);
     }
 
@@ -128,6 +139,9 @@ public class Hero {
         switch (p.getType()) {
             case MEDKIT:
                 hp += p.getPower();
+                if (hp > hpMax) {
+                    hp = hpMax;
+                }
                 break;
             case MONEY:
                 money += p.getPower();
@@ -144,14 +158,22 @@ public class Hero {
                 hpMax += 10;
                 return true;
             case HP:
-                hp += 10;
-                return true;
+                if (hp < hpMax) {
+                    hp += 10;
+                    if (hp > hpMax) {
+                        hp = hpMax;
+                    }
+                    return true;
+                }
             case WEAPON:
                 if (weaponNum < weapons.length - 1) {
                     weaponNum++;
                     currentWeapon = weapons[weaponNum];
                     return true;
                 }
+            case MAGNET:
+                magneticField.radius += 10;
+                return true;
         }
         return false;
     }
@@ -174,11 +196,13 @@ public class Hero {
             velocity.y += MathUtils.sinDeg(angle) * enginePower * dt;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.U)) {
+            setPause(true);
             shop.setVisible(true);
         }
 
         position.mulAdd(velocity, dt);
         hitArea.setPosition(position);
+        magneticField.setPosition(position);
         float stopKoef = 1.0f - 1.0f * dt;
         if (stopKoef < 0) {
             stopKoef = 0;

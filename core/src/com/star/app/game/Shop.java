@@ -36,6 +36,21 @@ public class Shop extends Group {
         skin.add("simpleSkin", textButtonStyle);
 
 
+        final TextButton btnMagnet = new TextButton("Magnet", textButtonStyle);
+        btnMagnet.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (hero.isMoneyEnough(Hero.Skill.MAGNET.cost)) {
+                    if (hero.upgrade(Hero.Skill.MAGNET)) {
+                        hero.decreaseMoney(Hero.Skill.MAGNET.cost);
+                    }
+                }
+            }
+        });
+
+        btnMagnet.setPosition(120, 120);
+        this.addActor(btnMagnet);
+
         final TextButton btnWp = new TextButton("Weapon", textButtonStyle);
         btnWp.addListener(new ChangeListener() {
             @Override
@@ -90,6 +105,7 @@ public class Shop extends Group {
         btnClose.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                hero.setPause(false);
                 thisShop.setVisible(false);
             }
         });
