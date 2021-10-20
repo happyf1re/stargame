@@ -1,5 +1,6 @@
 package com.star.app.game;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
@@ -9,6 +10,7 @@ import com.star.app.screen.utils.Assets;
 public class PowerUpsController extends ObjectPool<PowerUp> {
     private GameController gc;
     private TextureRegion[][] textures;
+    private TextureRegion texture;
 
     @Override
     protected PowerUp newObject() {
@@ -19,13 +21,19 @@ public class PowerUpsController extends ObjectPool<PowerUp> {
         this.gc = gc;
         this.textures = new TextureRegion(Assets.getInstance().getAtlas().findRegion("powerups"))
                 .split(60, 60);
+        //чтобы не искать текстуру, просто взял кнопку
+        this.texture = new TextureRegion(Assets.getInstance().getAtlas().findRegion("ship"));
     }
 
     public void render(SpriteBatch batch) {
         for (int i = 0; i < activeList.size(); i++) {
             PowerUp p = activeList.get(i);
-            int frameIndex = (int)(p.getTime() / 0.1f) % textures[p.getType().index].length;
-            batch.draw(textures[p.getType().index][frameIndex], p.getPosition().x - 30, p.getPosition().y - 30);
+            if (p.getType() != PowerUp.Type.ARMOR) {
+                int frameIndex = (int) (p.getTime() / 0.1f) % textures[p.getType().index].length;
+                batch.draw(textures[p.getType().index][frameIndex], p.getPosition().x - 30, p.getPosition().y - 30);
+            } else {
+                batch.draw(texture, p.getPosition().x, p.getPosition().y);
+            }
         }
     }
 
