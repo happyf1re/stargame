@@ -17,12 +17,17 @@ public class Ship {
     protected float fireTimer;
     protected int hpMax;
     protected int hp;
+    protected int armor;
     protected Weapon currentWeapon;
     protected Circle hitArea;
     protected Circle magneticField;
     protected Weapon[] weapons;
     protected int weaponNum;
     protected OwnerType ownerType;
+
+    public int getArmor() {
+        return armor;
+    }
 
     public OwnerType getOwnerType() {
         return ownerType;
@@ -60,6 +65,7 @@ public class Ship {
         this.gc = gc;
         this.hpMax = hpMax;
         this.hp = hpMax;
+        this.armor = 0;
         this.position = new Vector2(x, y);
         this.hitArea = new Circle(position, 26);
         this.magneticField = new Circle(position, 100);
@@ -112,7 +118,11 @@ public class Ship {
     }
 
     public void takeDamage(int amount) {
-        hp -= amount;
+        if (armor > 0) {
+            armor -= amount;
+        } else {
+            hp -= amount;
+        }
     }
 
     public void accelerate(float dt) {

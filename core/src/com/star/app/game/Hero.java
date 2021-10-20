@@ -78,6 +78,7 @@ public class Hero extends Ship {
         stringBuilder.clear();
         stringBuilder.append("SCORE: ").append(scoreView).append("\n");
         stringBuilder.append("HP: ").append(hp).append(" / ").append(hpMax).append("\n");
+        stringBuilder.append("ARMOR: ").append(armor).append("\n");
         stringBuilder.append("MONEY: ").append(money).append("\n");
         stringBuilder.append("BULLETS: ").append(currentWeapon.getCurBullets()).append(" / ")
                 .append(currentWeapon.getMaxBullets()).append("\n");
@@ -112,6 +113,13 @@ public class Hero extends Ship {
                         .append(count);
                 gc.getInfoController().setup(p.getPosition().x, p.getPosition().y,
                         stringBuilder, Color.ORANGE);
+                break;
+            case ARMOR:
+                stringBuilder.clear();
+                stringBuilder.append("ARMOR +").append(p.getPower());
+                gc.getInfoController().setup(p.getPosition().x, p.getPosition().y,
+                        stringBuilder, Color.CORAL);
+                armor += p.getPower();
                 break;
         }
     }
